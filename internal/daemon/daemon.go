@@ -4,8 +4,8 @@ import (
 	"log/slog"
 	"time"
 
-	"ttp-clock-sync/internal/dock"
-	"ttp-clock-sync/internal/hidtransport"
+	"trs-clock-sync/internal/dock"
+	"trs-clock-sync/internal/hidtransport"
 )
 
 const (

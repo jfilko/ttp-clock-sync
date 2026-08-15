@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO="jfilko/ttp-clock-sync"
-BIN_NAME="ttp-clock-sync"
+REPO="jfilko/trs-clock-sync"
+BIN_NAME="trs-clock-sync"
 INSTALL_DIR="$HOME/.local/bin"
-UDEV_RULE_PATH="/etc/udev/rules.d/99-ttp-clock-sync.rules"
+UDEV_RULE_PATH="/etc/udev/rules.d/99-trs-clock-sync.rules"
 SYSTEMD_USER_DIR="$HOME/.config/systemd/user"
-SERVICE_NAME="ttp-clock-sync.service"
+SERVICE_NAME="trs-clock-sync.service"
 
 TMPDIR=""
 
@@ -65,7 +65,7 @@ detect_arch() {
 fetch_latest_tag() {
   log "Fetching latest release info from GitHub..."
   local tag
-  tag=$(curl -fsSL -H "User-Agent: ttp-clock-sync-install" \
+  tag=$(curl -fsSL -H "User-Agent: trs-clock-sync-install" \
     "https://api.github.com/repos/${REPO}/releases/latest" \
     | grep '"tag_name"' | head -1 | sed -E 's/.*"tag_name": *"([^"]+)".*/\1/') || tag=""
   if [ -z "$tag" ]; then
@@ -142,11 +142,11 @@ install_systemd_unit() {
   mkdir -p "$SYSTEMD_USER_DIR"
   cat > "$SYSTEMD_USER_DIR/$SERVICE_NAME" <<'EOF'
 [Unit]
-Description=ttp-clock-sync time sync daemon
+Description=trs-clock-sync time sync daemon
 After=default.target
 
 [Service]
-ExecStart=%h/.local/bin/ttp-clock-sync
+ExecStart=%h/.local/bin/trs-clock-sync
 Restart=on-failure
 RestartSec=5
 
@@ -162,11 +162,11 @@ EOF
 print_summary() {
   cat <<EOF
 
-ttp-clock-sync installed to $INSTALL_DIR/$BIN_NAME
+trs-clock-sync installed to $INSTALL_DIR/$BIN_NAME
 
-  systemctl --user status ttp-clock-sync   # check it's running
-  journalctl --user -u ttp-clock-sync -f   # tail logs
-  systemctl --user stop ttp-clock-sync     # stop it
+  systemctl --user status trs-clock-sync   # check it's running
+  journalctl --user -u trs-clock-sync -f   # tail logs
+  systemctl --user stop trs-clock-sync     # stop it
 EOF
 }
 
@@ -184,7 +184,7 @@ main() {
   tag=$(fetch_latest_tag)
   log "Latest release: $tag"
   local version="${tag#v}"
-  local asset="ttp-clock-sync_${version}_linux_${arch}.tar.gz"
+  local asset="trs-clock-sync_${version}_linux_${arch}.tar.gz"
   local base_url="https://github.com/${REPO}/releases/download/${tag}"
 
   TMPDIR=$(mktemp -d)
