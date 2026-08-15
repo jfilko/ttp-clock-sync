@@ -1,0 +1,54 @@
+version: 2
+
+builds:
+  - id: ttp-clock-sync
+    main: ./cmd/ttp-clock-sync
+    binary: ttp-clock-sync
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  - formats: [tar.gz]
+    format_overrides:
+      - goos: windows
+        formats: [zip]
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  use: git
+  sort: asc
+  groups:
+    - title: Features
+      regexp: '^feat(\(.+\))?!?:'
+      order: 0
+    - title: Bug Fixes
+      regexp: '^fix(\(.+\))?!?:'
+      order: 1
+    - title: Performance Improvements
+      regexp: '^perf(\(.+\))?!?:'
+      order: 2
+  filters:
+    exclude:
+      - '^docs(\(.+\))?!?:'
+      - '^style(\(.+\))?!?:'
+      - '^refactor(\(.+\))?!?:'
+      - '^test(\(.+\))?!?:'
+      - '^build(\(.+\))?!?:'
+      - '^ci(\(.+\))?!?:'
+      - '^chore(\(.+\))?!?:'
+      - '^revert(\(.+\))?!?:'
+      - '^Merge'
+
+release:
+  prerelease: auto
