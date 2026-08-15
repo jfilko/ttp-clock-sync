@@ -41,8 +41,14 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           BIN=ttp-clock-sync
           [ "${{ matrix.goos }}" = "windows" ] && BIN=ttp-clock-sync.exe
+          TAGS=""
+          # The default libusb backend never fills in usage_page/usage on Linux
+          # (bearsh/hid ships that as an opt-in "invasive" ioctl), which is what
+          # daemon.enumerate() matches devices on — so without the hidraw backend
+          # the daemon can never detect the dock on Linux, even as root.
+          [ "${{ matrix.goos }}" = "linux" ] && TAGS="-tags hidraw"
           mkdir -p dist
-          go build -trimpath -ldflags "-s -w -X main.version=${VERSION}" -o "dist/${BIN}" ./cmd/ttp-clock-sync
+          go build -trimpath $TAGS -ldflags "-s -w -X main.version=${VERSION}" -o "dist/${BIN}" ./cmd/ttp-clock-sync
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
           echo "BIN=${BIN}" >> "$GITHUB_ENV"
       - name: Archive (tar.gz)
