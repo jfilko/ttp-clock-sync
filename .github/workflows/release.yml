@@ -39,8 +39,8 @@ jobs:
         run: |
           set -euo pipefail
           VERSION="${GITHUB_REF_NAME#v}"
-          BIN=ttp-clock-sync
-          [ "${{ matrix.goos }}" = "windows" ] && BIN=ttp-clock-sync.exe
+          BIN=trs-clock-sync
+          [ "${{ matrix.goos }}" = "windows" ] && BIN=trs-clock-sync.exe
           TAGS=""
           # The default libusb backend never fills in usage_page/usage on Linux
           # (bearsh/hid ships that as an opt-in "invasive" ioctl), which is what
@@ -48,17 +48,17 @@ jobs:
           # the daemon can never detect the dock on Linux, even as root.
           [ "${{ matrix.goos }}" = "linux" ] && TAGS="-tags hidraw"
           mkdir -p dist
-          go build -trimpath $TAGS -ldflags "-s -w -X main.version=${VERSION}" -o "dist/${BIN}" ./cmd/ttp-clock-sync
+          go build -trimpath $TAGS -ldflags "-s -w -X main.version=${VERSION}" -o "dist/${BIN}" ./cmd/trs-clock-sync
           echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
           echo "BIN=${BIN}" >> "$GITHUB_ENV"
       - name: Archive (tar.gz)
         if: matrix.goos != 'windows'
         shell: bash
-        run: tar -C dist -czf "ttp-clock-sync_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz" "${BIN}"
+        run: tar -C dist -czf "trs-clock-sync_${VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.tar.gz" "${BIN}"
       - name: Archive (zip)
         if: matrix.goos == 'windows'
         shell: pwsh
-        run: Compress-Archive -Path "dist/$env:BIN" -DestinationPath "ttp-clock-sync_${env:VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
+        run: Compress-Archive -Path "dist/$env:BIN" -DestinationPath "trs-clock-sync_${env:VERSION}_${{ matrix.goos }}_${{ matrix.goarch }}.zip"
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
           name: release-${{ matrix.goos }}-${{ matrix.goarch }}

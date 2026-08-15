@@ -1,7 +1,7 @@
 version: 2
 
 builds:
-  - id: ttp-clock-sync
+  - id: trs-clock-sync
     skip: true
 
 release:

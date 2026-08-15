@@ -1,4 +1,4 @@
-# ttp-clock-sync
+# trs-clock-sync
 
 A background daemon that keeps a Teevolution RapidSync 8k dock's onboard
 clock in sync with your computer's time: it detects the dock automatically
@@ -6,8 +6,8 @@ when it's plugged in, pushes the current time once immediately, and then
 again every minute for as long as it stays connected. See
 [`docs/payloads.md`](docs/payloads.md) for protocol reverse-engineering notes.
 
-[![PR Check](https://github.com/jfilko/ttp-clock-sync/actions/workflows/pr-check.yml/badge.svg)](https://github.com/jfilko/ttp-clock-sync/actions/workflows/pr-check.yml)
-[![Release](https://img.shields.io/github/v/release/jfilko/ttp-clock-sync)](https://github.com/jfilko/ttp-clock-sync/releases/latest)
+[![PR Check](https://github.com/jfilko/trs-clock-sync/actions/workflows/pr-check.yml/badge.svg)](https://github.com/jfilko/trs-clock-sync/actions/workflows/pr-check.yml)
+[![Release](https://img.shields.io/github/v/release/jfilko/trs-clock-sync)](https://github.com/jfilko/trs-clock-sync/releases/latest)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
 ## Table of Contents
@@ -25,20 +25,20 @@ again every minute for as long as it stays connected. See
 #### Quick install
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/jfilko/ttp-clock-sync/main/install-linux.sh | bash
+curl -fsSL https://raw.githubusercontent.com/jfilko/trs-clock-sync/main/install-linux.sh | bash
 ```
 
 This downloads the latest release binary for your architecture (amd64/arm64),
 verifies it against the release's checksums, installs it to
-`~/.local/bin/ttp-clock-sync`, installs the udev rule needed for
+`~/.local/bin/trs-clock-sync`, installs the udev rule needed for
 `/dev/hidraw` access (you'll be prompted for `sudo` for just that one step),
 and installs + enables a user-level `systemd` service so the daemon starts
 automatically on login. Re-run the same command any time to upgrade — it
 stops the running service, replaces the binary, and restarts it.
 
 ```sh
-systemctl --user status ttp-clock-sync   # check it's running
-journalctl --user -u ttp-clock-sync -f   # tail logs
+systemctl --user status trs-clock-sync   # check it's running
+journalctl --user -u trs-clock-sync -f   # tail logs
 ```
 
 #### Manual install
@@ -48,7 +48,7 @@ or systemd for you? Release binaries already handle this, but if you build
 it yourself on Linux, you must pass `-tags hidraw`:
 
 ```sh
-go build -tags hidraw -o ttp-clock-sync ./cmd/ttp-clock-sync
+go build -tags hidraw -o trs-clock-sync ./cmd/trs-clock-sync
 ```
 
 Without that tag, [`bearsh/hid`](https://github.com/bearsh/hid) defaults to
@@ -66,7 +66,7 @@ depending on your session/login manager setup, so this rule grants access
 via a POSIX ACL instead, which doesn't depend on either:
 
 ```sh
-# /etc/udev/rules.d/99-ttp-clock-sync.rules
+# /etc/udev/rules.d/99-trs-clock-sync.rules
 KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3554", ATTRS{idProduct}=="f523", RUN+="/usr/bin/setfacl -m u:YOUR_USERNAME:rw $env{DEVNAME}"
 ```
 
@@ -89,13 +89,13 @@ If you installed via `install-linux.sh`, the daemon is already running as a
 background service — see the commands above, and stop it with:
 
 ```sh
-systemctl --user stop ttp-clock-sync
+systemctl --user stop trs-clock-sync
 ```
 
 If you're running a manually-built binary directly:
 
 ```sh
-./ttp-clock-sync
+./trs-clock-sync
 ```
 
 It's a long-running daemon, not a one-shot command: it checks for a
@@ -135,12 +135,12 @@ lefthook install
 
 macOS blocks USB HID access to this dock (it's a composite device that also exposes keyboard/mouse HID collections) unless the exact binary is granted Input Monitoring permission:
 
-1. Run `./ttp-clock-sync` once — this triggers a permission prompt, or if it silently fails to open the device (`open device failed ... hidapi: failed to open device`), the OS may not have prompted at all.
+1. Run `./trs-clock-sync` once — this triggers a permission prompt, or if it silently fails to open the device (`open device failed ... hidapi: failed to open device`), the OS may not have prompted at all.
 2. Open **System Settings → Privacy & Security → Input Monitoring**.
-3. Ensure `ttp-clock-sync` is listed and enabled. If it's missing, add it manually via the `+` button, pointing at the built binary's path.
-4. Fully quit and reopen your terminal app (a grant doesn't apply to an already-running shell session), then rerun `./ttp-clock-sync`.
+3. Ensure `trs-clock-sync` is listed and enabled. If it's missing, add it manually via the `+` button, pointing at the built binary's path.
+4. Fully quit and reopen your terminal app (a grant doesn't apply to an already-running shell session), then rerun `./trs-clock-sync`.
 
-This permission is tied to the exact executable path, so build once (`go build -o ttp-clock-sync ./cmd/ttp-clock-sync`) and keep running that same binary — `go run ./cmd/ttp-clock-sync` creates a new temporary binary on every invocation and will never keep the grant.
+This permission is tied to the exact executable path, so build once (`go build -o trs-clock-sync ./cmd/trs-clock-sync`) and keep running that same binary — `go run ./cmd/trs-clock-sync` creates a new temporary binary on every invocation and will never keep the grant.
 
 ## License
 

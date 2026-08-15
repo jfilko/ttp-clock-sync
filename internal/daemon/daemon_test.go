@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"ttp-clock-sync/internal/dock"
-	"ttp-clock-sync/internal/hidtransport"
+	"trs-clock-sync/internal/dock"
+	"trs-clock-sync/internal/hidtransport"
 )
 
 // fakeHandle is a hidtransport.Handle test double that records writes and

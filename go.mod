@@ -1,4 +1,4 @@
-module ttp-clock-sync
+module trs-clock-sync
 
 go 1.26
 
