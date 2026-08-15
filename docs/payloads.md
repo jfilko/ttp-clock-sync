@@ -1,12 +1,11 @@
 # Payloads
 
-## [Payload 1](payloads/payload_1.png)
-
-This payload has been captured with Wireshark by running Teevolution app, changing time in Windows and waiting for the
-dock to change to the correct date. Between updating time and dongle showing correct time, there has been only 1
-outgoing payload:
-
+- **Payload 1**: 2026-08-15 12:59:04 (Saturday)
 ```text
+Continuous:
+1c00101011230dd4ffff000000001b0000020002000002300000000021090a02010028000a001007ea080f0c3b040600000000000000000000000000000000000000000000000000000000e2
+
+Hex dump format:
 1c 00 10 10 11 23 0d d4 ff ff 00 00 00 00 1b 00
 00 02 00 02 00 00 02 30 00 00 00 00 21 09 0a 02
 01 00 28 00 0a 00 10 07 ea 08 0f 0c 3b 04 06 00
@@ -14,7 +13,32 @@ outgoing payload:
 00 00 00 00 00 00 00 00 00 00 00 e2
 ```
 
-Gemini extracted this info from it:
+- **Payload 2**: 2026-08-15 18:59:50 (Saturday)
+```text
+Continuous:
+1c00b05978170dd4ffff000000001b0000020006000002300000000021090a02010028000a001007ea080f123b320600000000000000000000000000000000000000000000000000000000ae
+
+Hex dump format:
+1c 00 b0 59 78 17 0d d4 ff ff 00 00 00 00 1b 00
+00 02 00 06 00 00 02 30 00 00 00 00 21 09 0a 02
+01 00 28 00 0a 00 10 07 ea 08 0f 12 3b 32 06 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 ae
+```
+- **Payload 3**: 2026-06-15 20:55:03 (Monday)
+```text
+Continuous:
+1c00b0d94d270dd4ffff000000001b0000020006000002300000000021090a02010028000a001007ea060f1437030100000000000000000000000000000000000000000000000000000000e6
+
+Hex dump format:
+1c 00 b0 d9 4d 27 0d d4 ff ff 00 00 00 00 1b 00
+00 02 00 06 00 00 02 30 00 00 00 00 21 09 0a 02
+01 00 28 00 0a 00 10 07 ea 06 0f 14 37 03 01 00
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 00 00 e6
+```
+
+Here is a Gemini extract from the first payload:
 
 |    Offset     | Field Name           |  Data Type  | Value (Hex) | Decoded Example | Description                                                     |
 |:-------------:|:---------------------|:-----------:|:-----------:|:---------------:|:----------------------------------------------------------------|
