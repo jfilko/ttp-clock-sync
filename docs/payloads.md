@@ -38,6 +38,28 @@ Hex dump format:
 00 00 00 00 00 00 00 00 00 00 00 e6
 ```
 
+## USB HID interface
+
+The dock (Compx "RapidSync", VID `0x3554` / PID `0xF523`) is a composite HID
+device: on macOS it enumerates as 17 separate logical HID collections sharing
+that VID/PID (keyboard, mouse, consumer-control, and several vendor-specific
+pages), most under one physical interface whose 293-byte report descriptor
+declares 9 distinct Report IDs. The time-sync command channel is the
+collection with **Usage Page `0xFF08`, Usage `0x0002`, Report ID `0x0A`**,
+whose descriptor fragment is:
+
+```
+06 08 ff 09 02 a1 01 85 0a 15 00 26 ff 00 75 08 95 27 09 02 81 00 09 02 91 00 c0
+```
+
+This declares an **Output** report (`91 00`, not `B1`/Feature) of 1 Report-ID
+byte + 39 data bytes = 40 bytes total, confirming both the Output-report
+assumption and the `ReportSize = 40` used throughout this codebase. Opening
+any *other* collection on this VID/PID (e.g. the keyboard/mouse ones) either
+fails outright or writes to the wrong channel — `internal/dock.Device` and
+`internal/daemon`'s enumeration filter on this exact UsagePage/Usage pair to
+avoid both.
+
 Here is a Gemini extract from the first payload:
 
 |    Offset     | Field Name           |  Data Type  | Value (Hex) | Decoded Example | Description                                                     |
