@@ -49,7 +49,7 @@ func TestBuildTimeSyncReport_SamplePayloads(t *testing.T) {
 	}
 }
 
-func TestBuildTimeSyncReport_SundayEncodedAsSeven(t *testing.T) {
+func TestBuildTimeSyncReport_SundayEncodedAsZero(t *testing.T) {
 	sunday := time.Date(2026, time.August, 16, 0, 0, 0, 0, time.UTC)
 	if sunday.Weekday() != time.Sunday {
 		t.Fatalf("test fixture bug: %v is not a Sunday", sunday)
@@ -57,8 +57,8 @@ func TestBuildTimeSyncReport_SundayEncodedAsSeven(t *testing.T) {
 
 	report := BuildTimeSyncReport(sunday)
 
-	if got := report[0x0A]; got != 7 {
-		t.Errorf("day-of-week byte for Sunday = %d, want 7", got)
+	if got := report[0x0A]; got != 0 {
+		t.Errorf("day-of-week byte for Sunday = %d, want 0", got)
 	}
 }
 

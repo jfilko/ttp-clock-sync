@@ -46,19 +46,10 @@ func BuildTimeSyncReport(t time.Time) [ReportSize]byte {
 	report[0x07] = byte(t.Hour())
 	report[0x08] = byte(t.Minute())
 	report[0x09] = byte(t.Second())
-	report[0x0A] = dayOfWeek(t.Weekday())
+	report[0x0A] = byte(t.Weekday()) // Go's time.Weekday already matches the dock's 0=Sunday..6=Saturday encoding
 	// 0x0B..0x26 left as zero padding.
 	report[0x27] = checksum(report)
 	return report
-}
-
-// dayOfWeek converts Go's time.Weekday (0=Sunday..6=Saturday) to the dock's
-// encoding (1=Monday..6=Saturday, 7=Sunday).
-func dayOfWeek(w time.Weekday) byte {
-	if w == time.Sunday {
-		return 7
-	}
-	return byte(w)
 }
 
 // checksum computes byte 0x27 such that summing all ReportSize bytes, mod
