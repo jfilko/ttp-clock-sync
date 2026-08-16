@@ -14,6 +14,7 @@ again every minute for as long as it stays connected. See
 
 - [Installation](#installation)
   - [Linux](#linux)
+  - [macOS](#macos)
 - [Usage](#usage)
 - [Development](#development)
 - [License](#license)
@@ -83,13 +84,69 @@ sudo udevadm control --reload-rules && sudo udevadm trigger
 Then unplug/replug the dock (or just run as root) before rerunning the
 daemon.
 
-## Usage
+### macOS
 
-If you installed via `install-linux.sh`, the daemon is already running as a
-background service — see the commands above, and stop it with:
+#### Quick install
 
 ```sh
-systemctl --user stop trs-clock-sync
+curl -fsSL https://raw.githubusercontent.com/jfilko/trs-clock-sync/main/install-macos.sh | bash
+```
+
+Apple Silicon (`arm64`) only. This downloads the latest release binary,
+verifies it against the release's checksums, installs it to
+`~/.local/bin/trs-clock-sync`, and installs + starts a `launchd`
+LaunchAgent so the daemon runs persistently in the background and restarts
+on crash. Re-run the same command any time to upgrade — it stops the
+running agent, replaces the binary, and restarts it.
+
+```sh
+launchctl print gui/$(id -u)/com.jfilko.trs-clock-sync   # check it's running
+tail -f ~/Library/Logs/trs-clock-sync/trs-clock-sync.log # tail logs
+launchctl bootout gui/$(id -u)/com.jfilko.trs-clock-sync # stop it
+```
+
+macOS blocks USB HID access to the dock until `trs-clock-sync` is granted
+Input Monitoring permission — this can't be scripted, so the installer
+opens **System Settings → Privacy & Security → Input Monitoring** for you
+automatically. From there:
+
+1. Find `trs-clock-sync` in the list and make sure it's enabled. If it's
+   missing, add it with the "+" button, pointing at
+   `~/.local/bin/trs-clock-sync`. `~/.local` is hidden (dot-prefixed), so
+   in the file picker press `Cmd+Shift+.` to reveal hidden files, or type
+   the path directly with `Cmd+Shift+G`.
+2. Restart the daemon so it picks up the new permission:
+   ```sh
+   launchctl kickstart -k gui/$(id -u)/com.jfilko.trs-clock-sync
+   ```
+
+If you're upgrading and the dock stops being detected afterwards, re-check
+Input Monitoring — the grant is tied to this exact binary path, and while
+upgrades replace it in place at the same path, macOS's exact re-grant
+behavior across a binary replacement isn't guaranteed.
+
+#### Manual install
+
+Prefer to build from source? No special build tag is needed on macOS
+(unlike Linux's `-tags hidraw`):
+
+```sh
+go build -o trs-clock-sync ./cmd/trs-clock-sync
+```
+
+See [macOS: grant Input Monitoring permission](#macos-grant-input-monitoring-permission)
+under Development for the permission-grant steps for a manually built
+binary.
+
+## Usage
+
+If you installed via `install-linux.sh` or `install-macos.sh`, the daemon
+is already running as a background service — see the commands above, and
+stop it with:
+
+```sh
+systemctl --user stop trs-clock-sync                       # Linux
+launchctl bootout gui/$(id -u)/com.jfilko.trs-clock-sync    # macOS
 ```
 
 If you're running a manually-built binary directly:
@@ -132,6 +189,10 @@ lefthook install
 ```
 
 ### macOS: grant Input Monitoring permission
+
+If you installed via `install-macos.sh`, see [macOS](#macos) under
+Installation instead — the installer opens this pane for you
+automatically.
 
 macOS blocks USB HID access to this dock (it's a composite device that also exposes keyboard/mouse HID collections) unless the exact binary is granted Input Monitoring permission:
 

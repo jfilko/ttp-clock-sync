@@ -37,7 +37,7 @@ jobs:
         run: sudo apt-get install -y shellcheck
       - uses: golangci/golangci-lint-action@ba0d7d2ec06a0ea1cb5fa41b2e4a3ab91d21278a # v9.3.0
       - name: Run shellcheck
-        run: shellcheck install-linux.sh
+        run: shellcheck install-linux.sh install-macos.sh
 
   pr-title:
     runs-on: ubuntu-latest
